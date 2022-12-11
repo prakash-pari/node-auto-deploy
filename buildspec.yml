@@ -3,27 +3,67 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo Installing Node 12...
-      # - curl -sL https://deb.nodesource.com/setup_12.x | bash -
-      # - apt install -y nodejs
-      - curl -fsSL https://deb.nodesource.com/setup_16.x | bash - &&\
-      - apt install -y nodejs
-      - echo Installing Yarn...
-      - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-      - echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-      - apt install --no-install-recommends yarn
+      - echo update npm...
+      - npm install -g n
+      - n latest
+      - npm update -g npm
+      - echo node -v
+      - node -v
+      - echo npm -v
+      - npm -v
+      - echo install yarn...
+      - npm install -g yarn
+      - echo yarn -v
+      - yarn -v
   pre_build:
     commands:
-      - echo Installing dependencies...
-      - yarn
+      - echo Installing source NPM dependencies...
+      - yarn install
   build:
     commands:
-      - echo Testing...
-      - yarn test
-      - echo Building...
-      - yarn build
+      - echo Build started on `date`
+      - echo Compiling the Node.js code
+      - yarn run build
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Distributing to S3...
+      # - aws s3 sync dist s3://[アップロード用のS3バケット名] --delete --acl public-read
 artifacts:
-  files:
-    - "**/*"
-  discard-paths: no
-  base-directory: dist
+   files:
+      - "**/*"
+    discard-paths: no
+    base-directory: dist
+
+
+
+
+# version: 0.2
+
+# phases:
+#   install:
+#     commands:
+#       - echo Installing Node 12...
+#       # - curl -sL https://deb.nodesource.com/setup_12.x | bash -
+#       # - apt install -y nodejs
+#       - curl -fsSL https://deb.nodesource.com/setup_16.x | bash - &&\
+#       - apt install -y nodejs
+#       - echo Installing Yarn...
+#       # - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+#       # - echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+#       - apt install --no-install-recommends yarn
+#   pre_build:
+#     commands:
+#       - echo Installing dependencies...
+#       - yarn
+#   build:
+#     commands:
+#       - echo Testing...
+#       - yarn test
+#       - echo Building...
+#       - yarn build
+# artifacts:
+#   files:
+#     - "**/*"
+#   discard-paths: no
+#   base-directory: dist
